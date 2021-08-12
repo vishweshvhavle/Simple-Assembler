@@ -8,7 +8,19 @@
 #Performs reg1 = reg2 + reg3. If the computation
 #overflows, then the overflow flag is set
 
+#OPCODES for quick reference
+# add 00000 | sub 00001 | mov $Imm 00010 | mov 00011 | ld 00100 | st 00101 | mul 00110 | div 00111 | rs 01000 | ls 01001 | xor 01010 | or 01011 | and 01100
+# not 01101 | cmp 01110 | jmp 01111 | jlt 10000 | jgt 10001 | je 10010 | hlt 10011  
+
+#someone change this to that cool kid shiz where it takes input from individual lines na thx 
+operation = input()
+
+#empty string for output
+output = ''
+
 def add():
+    if operation == 'ADD':
+        output = output + '00000' 
     return
 
 
