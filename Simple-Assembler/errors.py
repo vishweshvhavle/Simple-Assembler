@@ -36,7 +36,7 @@ def error_h():
 def error_i():
     return
 
-#Wrong syntax used for instructions (For example, add 
+#Wrong syntax used for instructions (For example, add
 #instruction being used as a type B instruction )
 def error_j():
     return
