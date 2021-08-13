@@ -1,5 +1,3 @@
-import errors
-
 # ISA OPERATIONS
 
 # OPCODES for reference
@@ -16,7 +14,7 @@ def regFind(register):
         return '001'
     elif register == 'R2':
         return '010'
-    elif register == 'R2':
+    elif register == 'R3':
         return '011'
     elif register == 'R4':
         return '100'
@@ -65,13 +63,21 @@ def moveRegister(reg1, reg2, line_number):
 
 # Loads data from mem_addr into reg1.
 # D | opcode reg1 memory(8bits)
-def load(reg1, value, line_number):
+def load(reg1, value,line_number,variables):
+    if value in variables:
+        index = variables.index(value)
+        return '00100' + regFind(reg1) + binary(int(variables[index+1]))
+
     return '00100' + regFind(reg1) + binary(int(value))
 
 
 # Stores data from reg1 to mem_addr.
 # D | opcode reg1 memory(8bits)
-def store(reg1, value, line_number):
+def store(reg1, value,line_number,variables):
+    if value in variables:
+        index = variables.index(value)
+        return '00101' + regFind(reg1) + binary(int(variables[index+1]))
+
     return '00101' + regFind(reg1) + binary(int(value))
 
 
@@ -93,14 +99,14 @@ def div(reg1, reg2, line_number):
 # where $Imm is an 8 bit value.
 # B | opcode(5bits) reg1 immediatevalue(8bits)
 def rightShift(reg1, value,line_number):
-    return '01000'
+    return '01000' + regFind(reg1) + binary(int(value))
 
 
 # Left shifts reg1 by $Imm,
 # where $Imm is an 8 bit value.
 # B | opcode(5bits) reg1 immediatevalue(8bits)
 def leftShift(reg1, value,line_number):
-    return '01001'
+    return '01001' + regFind(reg1) + binary(int(value))
 
 
 # Performs bitwise XOR of reg2 and reg3.
@@ -139,29 +145,29 @@ def compare(reg1, reg2, line_number):
 
 # Jumps to mem_addr, where mem_addr is a memory address.
 # E | opcode unused(3bits) memory(8bits)
-def jmp():
-    return '01111'
+def jmp(value, line_number):
+    return '01111' + '000' + binary(int(value))
 
 
 # Jump to mem_addr if the less than flagis set (less than
 # flag = 1), where mem_addr is a memory address.
 # E | opcode unused(3bits) memory(8bits)
-def jlt():
-    return '10000'
+def jlt(value, line_number):
+    return '10000' + '000' + binary(int(value))
 
 
 # Jump to mem_addr if the greater than flag is set (greater than
 # flag = 1), where mem_addr is a memory address.
 # E | opcode unused(3bits) memory(8bits)
-def jgt():
-    return '10001'
+def jgt(value, line_number):
+    return '10001' + '000' + binary(int(value))
 
 
 # Jump to mem_addr if the equal flag is set (equal flag =
 # 1), where mem_addr is a memory address.
 # E | opcode unused(3bits) memory(8bits)
-def je():
-    return '10010'
+def je(value, line_number):
+    return '10010' + '000' + binary(int(value))
 
 
 # Stops the machine from executing until reset

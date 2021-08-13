@@ -17,7 +17,7 @@ FLAG = 0000000000000000
 
 #-----------------------------------------------------------------------------------
 
-no_vars = 0 #number of variables
+variables = []
 
 #Storing stdin inputs of assembly code in array
 assembly_code = []
@@ -29,71 +29,206 @@ for line in stdin:
         assembly_code.append(line.split())
 
 line_number = 0
+non_empty_lines = 0
+output = True
+
 for line in assembly_code:
     if line != []:
-        if line[0] == 'add':
-            machine_code.append(operations.add(line[1],line[2],line[3],line_number))
+        if line[0] == 'var':
+            variables.append(line[1])
+            non_empty_lines -= 1
+            variables.append(len(assembly_code)+non_empty_lines)
+
+        elif line[0] == 'add':
+            error = errors.error_type_A(line)
+            if error[0] == True:
+                print(error[1] + ', Line', line_number)
+                output = False
+                break
+            else:
+                machine_code.append(operations.add(line[1],line[2],line[3],line_number))
 
         elif line[0] == 'sub':
-            machine_code.append(operations.sub(line[1],line[2],line[3],line_number))
+            error = errors.error_type_A(line)
+            if error[0] == True:
+                print(error[1] + ', Line', line_number)
+                output = False
+                break
+            else:
+                machine_code.append(operations.sub(line[1],line[2],line[3],line_number))
 
         elif line[0] == 'mov':
             if line[2][0] == '$':
-                machine_code.append(operations.moveImmediate(line[1],line[2][1:],line_number))
+                error = errors.error_type_B(line)
+                if error[0] == True:
+                    print(error[1] + ', Line', line_number)
+                    output = False
+                    break
+                else:
+                    machine_code.append(operations.moveImmediate(line[1],line[2][1:],line_number))
             else:
-                machine_code.append(operations.moveRegister(line[1],line[2],line_number))
+                error = errors.error_type_C(line)
+                if error[0] == True:
+                    print(error[1] + ', Line', line_number)
+                    output = False
+                    break
+                else:
+                    machine_code.append(operations.moveRegister(line[1],line[2],line_number))
 
         elif line[0] == 'ld':
-            machine_code.append(operations.load(line[1],line[2],line_number))
+            error = errors.error_type_D(line)
+            if error[0] == True:
+                print(error[1] + ', Line', line_number)
+                output = False
+                break
+            else:
+                machine_code.append(operations.load(line[1],line[2],line_number,variables))
 
         elif line[0] == 'st':
-            machine_code.append(operations.store(line[1],line[2],line_number))
+            error = errors.error_type_D(line)
+            if error[0] == True:
+                print(error[1] + ', Line', line_number)
+                output = False
+                break
+            else:
+                machine_code.append(operations.store(line[1],line[2],line_number,variables))
 
         elif line[0] == 'mul':
-            machine_code.append(operations.mul(line[1],line[2],line[3],line_number))
+            error = errors.error_type_A(line)
+            if error[0] == True:
+                print(error[1] + ', Line', line_number)
+                output = False
+                break
+            else:
+                machine_code.append(operations.mul(line[1],line[2],line[3],line_number))
 
         elif line[0] == 'div':
-            machine_code.append(operations.div(line[1],line[2],line[3],line_number))
+            error = errors.error_type_C(line)
+            if error[0] == True:
+                print(error[1] + ', Line', line_number)
+                output = False
+                break
+            else:
+                machine_code.append(operations.div(line[1],line[2],line[3],line_number))
 
         elif line[0] == 'rs':
-            machine_code.append(operations.rightShift(line[1],line[2],line[3],line_number))
+            error = errors.error_type_B(line)
+            if error[0] == True:
+                print(error[1] + ', Line', line_number)
+                output = False
+                break
+            else:
+                machine_code.append(operations.rightShift(line[1],line[2][1:],line_number))
 
         elif line[0] == 'ls':
-            machine_code.append(operations.leftShift(line[1],line[2],line[3],line_number))
+            error = errors.error_type_B(line)
+            if error[0] == True:
+                print(error[1] + ', Line', line_number)
+                output = False
+                break
+            else:
+                machine_code.append(operations.leftShift(line[1],line[2][1:],line_number))
 
         elif line[0] == 'xor':
-            machine_code.append(operations.xor(line[1],line[2],line[3],line_number))
+            error = errors.error_type_A(line)
+            if error[0] == True:
+                print(error[1] + ', Line', line_number)
+                output = False
+                break
+            else:
+                machine_code.append(operations.xor(line[1],line[2],line[3],line_number))
 
         elif line[0] == 'or':
-            machine_code.append(operations.Or(line[1],line[2],line[3],line_number))
+            error = errors.error_type_A(line)
+            if error[0] == True:
+                print(error[1] + ', Line', line_number)
+                output = False
+                break
+            else:
+                machine_code.append(operations.Or(line[1],line[2],line[3],line_number))
+
+        elif line[0] == 'and':
+            error = errors.error_type_A(line)
+            if error[0] == True:
+                print(error[1] + ', Line', line_number)
+                output = False
+                break
+            else:
+                machine_code.append(operations.And(line[1],line[2],line[3],line_number))
 
         elif line[0] == 'not':
-            machine_code.append(operations.invert(line[1],line[2],line_number))
+            error = errors.error_type_C(line)
+            if error[0] == True:
+                print(error[1] + ', Line', line_number)
+                output = False
+                break
+            else:
+                machine_code.append(operations.invert(line[1],line[2],line_number))
 
         elif line[0] == 'cmp':
-            machine_code.append(operations.compare(line[1],line[2],line_number))
+            error = errors.error_type_C(line)
+            if error[0] == True:
+                print(error[1] + ', Line', line_number)
+                output = False
+                break
+            else:
+                machine_code.append(operations.compare(line[1],line[2],line_number))
 
         elif line[0] == 'jmp':
-            machine_code.append(operations.jmp(line[1],line_number))
+            error = errors.error_type_E(line)
+            if error[0] == True:
+                print(error[1] + ', Line', line_number)
+                output = False
+                break
+            else:
+                machine_code.append(operations.jmp(line[1],line_number))
 
         elif line[0] == 'jlt':
-            machine_code.append(operations.jlt(line[1],line_number))
+            error = errors.error_type_E(line)
+            if error[0] == True:
+                print(error[1] + ', Line', line_number)
+                output = False
+                break
+            else:
+                machine_code.append(operations.jlt(line[1],line_number))
 
         elif line[0] == 'jgt':
-            machine_code.append(operations.jgt(line[1],line_number))
+            error = errors.error_type_E(line)
+            if error[0] == True:
+                print(error[1] + ', Line', line_number)
+                output = False
+                break
+            else:
+                machine_code.append(operations.jgt(line[1],line_number))
 
         elif line[0] == 'je':
-            machine_code.append(operations.je(line[1],line_number))
+            error = errors.error_type_E(line)
+            if error[0] == True:
+                print(error[1] + ', Line', line_number)
+                output = False
+                break
+            else:
+                machine_code.append(operations.je(line[1],line_number))
 
         elif line[0] == 'hlt':
-            if line_number < len(assembly_code)-1:
-                errors.error_i()
+            error = errors.error_type_F(line)
+            if error[0] == True:
+                print(error[1] + ', Line', line_number)
+                output = False
                 break
-            machine_code.append(operations.hlt())
+            else:
+                machine_code.append(operations.hlt())
+
+        non_empty_lines += 1
+
     else:
         continue
 
-    line_number = line_number + 1
+    line_number += 1
 
-for line in machine_code:
-    print(line)
+if output == True:
+    #stdout Machine Code Output
+    for line in machine_code:
+        print(line)
+
+
