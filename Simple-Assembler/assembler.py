@@ -12,9 +12,6 @@ from sys import stdin
 # mul 00110 | div 00111 | rs 01000 | ls 01001 | xor 01010 | or 01011 | and 01100
 # not 01101 | cmp 01110 | jmp 01111 | jlt 10000 | jgt 10001 | je 10010 | hlt 10011
 
-#FLAGS
-FLAG = 0000000000000000
-
 #-----------------------------------------------------------------------------------
 
 variables = []
@@ -29,15 +26,19 @@ for line in stdin:
         assembly_code.append(line.split())
 
 line_number = 0
-non_empty_lines = 0
+memory_count = 0
 output = True
 
 for line in assembly_code:
-    if line != []:
+    if line == []:
+        assembly_code.remove(line)
+
+if assembly_code[-1][0] == 'hlt':
+    for line in assembly_code:
         if line[0] == 'var':
             variables.append(line[1])
-            non_empty_lines -= 1
-            variables.append(len(assembly_code)+non_empty_lines)
+            memory_count -= 1
+            variables.append(len(assembly_code)+memory_count)
 
         elif line[0] == 'add':
             error = errors.error_type_A(line)
@@ -219,16 +220,18 @@ for line in assembly_code:
             else:
                 machine_code.append(operations.hlt())
 
-        non_empty_lines += 1
+        memory_count += 1
+        line_number += 1
 
-    else:
-        continue
+    if output == True:
+        #stdout Machine Code Output
+        for line in machine_code:
+            print(line)
 
-    line_number += 1
+else:
+    print("Instructions do not terminate with an hlt.")
 
-if output == True:
-    #stdout Machine Code Output
-    for line in machine_code:
-        print(line)
+
+
 
 
