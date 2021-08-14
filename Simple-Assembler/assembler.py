@@ -29,16 +29,39 @@ line_number = 0
 memory_count = 0
 output = True
 
+assembly_code = operations.assembly_code_builder(assembly_code)
+
+#Removes Empty Lines
+for i in range(len(assembly_code)-1,-1,-1):
+    if assembly_code[i] == []:
+        assembly_code.pop(i)
+
+hlt_count = 0
+line_number = 1
+
 for line in assembly_code:
-    if line == []:
-        assembly_code.remove(line)
+    if line[0] == 'hlt':
+        hlt_count += 1
+        if hlt_count > 1:
+            print("Multiple instance of hlt instruction, Line", line_number)
+            output = False
+            break
+    line_number += 1
+
+line_number = 1
 
 if assembly_code[-1][0] == 'hlt':
     for line in assembly_code:
         if line[0] == 'var':
-            variables.append(line[1])
-            memory_count -= 1
-            variables.append(len(assembly_code)+memory_count)
+            error = errors.error_type_Var(line)
+            if error[0] == True:
+                print(error[1] + ', Line', line_number)
+                output = False
+                break
+            else:
+                variables.append(line[1])
+                memory_count -= 1
+                variables.append(len(assembly_code)+memory_count)
 
         elif line[0] == 'add':
             error = errors.error_type_A(line)
@@ -77,7 +100,7 @@ if assembly_code[-1][0] == 'hlt':
                     machine_code.append(operations.moveRegister(line[1],line[2],line_number))
 
         elif line[0] == 'ld':
-            error = errors.error_type_D(line)
+            error = errors.error_type_D(line,variables)
             if error[0] == True:
                 print(error[1] + ', Line', line_number)
                 output = False
@@ -86,7 +109,7 @@ if assembly_code[-1][0] == 'hlt':
                 machine_code.append(operations.load(line[1],line[2],line_number,variables))
 
         elif line[0] == 'st':
-            error = errors.error_type_D(line)
+            error = errors.error_type_D(line,variables)
             if error[0] == True:
                 print(error[1] + ', Line', line_number)
                 output = False
@@ -229,7 +252,7 @@ if assembly_code[-1][0] == 'hlt':
             print(line)
 
 else:
-    print("Instructions do not terminate with an hlt.")
+    print("Instructions do not terminate with an hlt, Line", len(assembly_code))
 
 
 

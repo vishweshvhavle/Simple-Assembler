@@ -36,6 +36,39 @@ def binary(num):
     bnr = x[::-1]
     return bnr
 
+def assembly_code_builder(assembly_code):
+    labels = []
+    line_number = 0
+    for line in assembly_code:
+        if line[0] == 'var':
+            line_number -= 1
+        if line[0][-1] == ':':
+            labels.append(line[0][:-1])
+            labels.append(binary(line_number))
+            line.remove(line[0])
+        line_number += 1
+
+    for line in assembly_code:
+        if line != []:
+            if line[0] == 'jmp':
+                if line[1] in labels:
+                    line[1] = labels[labels.index(line[1])+1]
+
+            elif line[0] == 'jlt':
+                if line[1] in labels:
+                    line[1] = labels[labels.index(line[1])+1]
+
+            elif line[0] == 'jgt':
+                if line[1] in labels:
+                    line[1] = labels[labels.index(line[1])+1]
+
+            elif line[0] == 'je':
+                if line[1] in labels:
+                    line[1] = labels[labels.index(line[1])+1]
+
+    return assembly_code
+
+
 # Performs reg1 = reg2 + reg3. If the computation
 # overflows, then the overflow flag is set
 # A | opcode (unused 2bits) reg1 reg2 reg3
@@ -146,28 +179,28 @@ def compare(reg1, reg2, line_number):
 # Jumps to mem_addr, where mem_addr is a memory address.
 # E | opcode unused(3bits) memory(8bits)
 def jmp(value, line_number):
-    return '01111' + '000' + binary(int(value))
+    return '01111' + '000' + str(value)
 
 
 # Jump to mem_addr if the less than flagis set (less than
 # flag = 1), where mem_addr is a memory address.
 # E | opcode unused(3bits) memory(8bits)
 def jlt(value, line_number):
-    return '10000' + '000' + binary(int(value))
+    return '10000' + '000' + str(value)
 
 
 # Jump to mem_addr if the greater than flag is set (greater than
 # flag = 1), where mem_addr is a memory address.
 # E | opcode unused(3bits) memory(8bits)
 def jgt(value, line_number):
-    return '10001' + '000' + binary(int(value))
+    return '10001' + '000' + str(value)
 
 
 # Jump to mem_addr if the equal flag is set (equal flag =
 # 1), where mem_addr is a memory address.
 # E | opcode unused(3bits) memory(8bits)
 def je(value, line_number):
-    return '10010' + '000' + binary(int(value))
+    return '10010' + '000' + str(value)
 
 
 # Stops the machine from executing until reset
