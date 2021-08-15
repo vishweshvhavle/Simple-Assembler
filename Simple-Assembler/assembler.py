@@ -143,7 +143,7 @@ if assembly_code[-1][0] == 'hlt':
                     output = False
                     break
                 else:
-                    machine_code.append(operations.div(line[1],line[2],line[3],line_number))
+                    machine_code.append(operations.div(line[1],line[2],line_number))
 
             elif line[0] == 'rs':
                 error = errors.error_type_B(line)
