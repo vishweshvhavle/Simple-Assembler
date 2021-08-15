@@ -253,8 +253,3 @@ if assembly_code[-1][0] == 'hlt':
 
 else:
     print("Instructions do not terminate with an hlt, Line", len(assembly_code))
-
-
-
-
-
