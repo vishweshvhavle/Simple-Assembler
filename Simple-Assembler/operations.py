@@ -66,7 +66,7 @@ def assembly_code_builder(assembly_code):
                 if line[1] in labels:
                     line[1] = labels[labels.index(line[1])+1]
 
-    return assembly_code
+    return assembly_code, labels
 
 
 # Performs reg1 = reg2 + reg3. If the computation

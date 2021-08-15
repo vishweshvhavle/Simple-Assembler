@@ -6,9 +6,6 @@ def error_type_Var(line):
     if len(line) != 2:
         return (True, "Wrong syntax used for instructions")
 
-    elif not line[1].replace('_', '').isalnum():
-        return (True, "Illegal variable name")
-
     return (False, None)
 
 def error_type_A(line):
@@ -36,6 +33,13 @@ def error_type_B(line):
     elif not line[2].startswith("$"):
         return (True, "Wrong syntax used for instructions")
 
+    elif not line[2][1:].isdigit():
+        return (True, "Illegal Immediate values")
+
+    elif line[2][1:].isdigit():
+        if int(line[2][1:]) > 255 or int(line[2][1:]) < 0:
+            return (True, "Illegal Immediate values")
+
     return (False, None)
 
 def error_type_C(line):
@@ -50,7 +54,7 @@ def error_type_C(line):
 
     return (False, None)
 
-def error_type_D(line, variables):
+def error_type_D(line, variables, labels):
     if len(line) != 3:
         return (True, "Wrong syntax used for instructions")
 
@@ -59,16 +63,24 @@ def error_type_D(line, variables):
 
     elif line[1] not in registers or line[2] not in registers:
         if line[2] not in variables:
-            return (True, "Undeclared Variable Used")
+            return (True, "Use of undefined variables")
+        elif line[2] in labels:
+            return (True, "Misuse of labels as variables")
         elif line[2] in variables:
             return (False, None)
         return (True, "Typos in instruction name or register name")
 
     return (False, None)
 
-def error_type_E(line):
+def error_type_E(line, labels, variables):
     if len(line) != 2:
         return (True, "Wrong syntax used for instructions")
+
+    elif line[1] not in labels:
+        return (True, "Use of undefined labels")
+
+    elif line[1] in variables:
+        return (True, "Misuse of variables as labels")
 
     return (False, None)
 
