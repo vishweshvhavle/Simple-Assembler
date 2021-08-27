@@ -52,6 +52,13 @@ for line in assembly_code:
 line_number = 1
 variable_truth = 1
 
+variable_count = 0
+
+for line in assembly_code:
+    if line[0] == 'var':
+        variable_count += 1
+
+
 if assembly_code[-1][0] == 'hlt':
     for line in assembly_code:
         if line[0] == 'var':
@@ -63,8 +70,8 @@ if assembly_code[-1][0] == 'hlt':
                     break
                 else:
                     variables.append(line[1])
-                    memory_count -= 1
-                    variables.append(len(assembly_code)+memory_count)
+                    variables.append(len(assembly_code)-variable_count+memory_count)
+                    memory_count += 1
             elif variable_truth == 0:
                 print('Variables not declared in the beginning, Line',line_number)
                 output = False
@@ -253,7 +260,7 @@ if assembly_code[-1][0] == 'hlt':
                 else:
                     machine_code.append(operations.hlt())
 
-        memory_count += 1
+        #memory_count += 1
         line_number += 1
 
     if output == True:
